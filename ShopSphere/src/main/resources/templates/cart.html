@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-meta('Shopping Cart — ShopNest')}"></head>
+<body>
+
+<!-- Navigation Bar -->
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<!-- Floating Alerts -->
+<div th:replace="~{fragments/alerts :: alert-messages}"></div>
+
+<main class="py-4">
+    <div class="container">
+        <!-- Breadcrumb Navigation -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb small">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Shopping Cart</li>
+            </ol>
+        </nav>
+
+        <h2 class="fw-bold mb-4">
+            <i class="bi bi-cart3 text-primary me-2"></i> Your Shopping Cart
+        </h2>
+
+        <!-- Empty Cart Display -->
+        <div th:if="${cart.empty}" class="text-center py-5 my-4 bg-white border rounded-4 shadow-sm">
+            <div class="display-1 text-muted mb-3"><i class="bi bi-bag-x"></i></div>
+            <h3 class="fw-bold">Your Cart is Currently Empty</h3>
+            <p class="text-muted">Looks like you haven't added anything to your cart yet.</p>
+            <a th:href="@{/products}" class="btn btn-primary btn-lg rounded-pill px-4 mt-2">
+                <i class="bi bi-arrow-left me-2"></i> Explore Products Now
+            </a>
+        </div>
+
+        <!-- Populated Cart Table & Summary -->
+        <div th:unless="${cart.empty}" class="row g-4">
+            <!-- Left: Cart Items Table -->
+            <div class="col-lg-8">
+                <div class="bg-white border rounded-4 shadow-sm overflow-hidden mb-3">
+                    <div class="table-responsive">
+                        <table class="table sn-cart-table align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Unit Price</th>
+                                    <th>Quantity</th>
+                                    <th>Subtotal</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item : ${cart.items}">
+                                    <td>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <img th:src="${item.product.imageUrl}" th:alt="${item.product.name}" class="sn-cart-thumb">
+                                            <div>
+                                                <a th:href="@{/products/{id}(id=${item.product.id})}" class="fw-bold text-dark text-decoration-none d-block" th:text="${item.product.name}">
+                                                    Product Name
+                                                </a>
+                                                <small class="text-muted font-monospace" th:text="'SKU: ' + ${item.product.sku}">SKU</small>
+                                                <div>
+                                                    <span class="badge bg-light text-secondary border" th:text="${item.product.category}">Category</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="fw-semibold">
+                                            ₹<span th:text="${#numbers.formatDecimal(item.product.price, 1, 'COMMA', 2, 'POINT')}">1,999.00</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <!-- Quantity Form with Plus & Minus Stepper -->
+                                        <form th:action="@{/cart/update}" method="post" class="auto-update-form m-0">
+                                            <input type="hidden" name="productId" th:value="${item.product.id}">
+                                            <div class="sn-qty-group">
+                                                <button type="button" class="sn-qty-btn btn-minus">&minus;</button>
+                                                <input type="number" name="quantity" class="sn-qty-input" th:value="${item.quantity}" min="1" th:max="${item.product.stockQuantity}">
+                                                <button type="button" class="sn-qty-btn btn-plus">&plus;</button>
+                                            </div>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark">
+                                            ₹<span th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 2, 'POINT')}">1,999.00</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/cart/remove/{productId}(productId=${item.product.id})}" 
+                                           class="btn btn-sm btn-outline-danger rounded-circle p-2" 
+                                           title="Remove item from cart"
+                                           onclick="return confirmAction('Remove this item from your shopping cart?')">
+                                            <i class="bi bi-trash3"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Cart Bottom Actions -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <a th:href="@{/products}" class="btn btn-outline-secondary rounded-pill px-3">
+                        <i class="bi bi-arrow-left me-1"></i> Continue Shopping
+                    </a>
+                    <form th:action="@{/cart/clear}" method="post" onsubmit="return confirmAction('Clear all items from your cart?');">
+                        <button type="submit" class="btn btn-outline-danger rounded-pill px-3">
+                            <i class="bi bi-trash me-1"></i> Clear Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right: Order Summary Card -->
+            <div class="col-lg-4">
+                <div class="sn-summary-card">
+                    <h5 class="fw-bold mb-4 pb-2 border-bottom">Order Summary</h5>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-secondary">Subtotal (<span th:text="${cart.totalItemCount}">0</span> items)</span>
+                        <span class="fw-semibold">₹<span th:text="${#numbers.formatDecimal(cart.subtotal, 1, 'COMMA', 2, 'POINT')}">0.00</span></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-secondary">Estimated Shipping</span>
+                        <span class="text-success fw-bold">FREE</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-secondary">Payment Method</span>
+                        <span class="badge bg-success-subtle text-success">Cash on Delivery</span>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <div class="d-flex justify-content-between align-items-baseline mb-4">
+                        <span class="fs-5 fw-bold text-dark">Total Amount</span>
+                        <span class="fs-4 fw-bold text-primary">₹<span th:text="${#numbers.formatDecimal(cart.totalAmount, 1, 'COMMA', 2, 'POINT')}">0.00</span></span>
+                    </div>
+
+                    <a th:href="@{/checkout}" class="btn btn-primary btn-lg w-100 rounded-pill fw-bold shadow-sm mb-3">
+                        Proceed to Checkout <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+
+                    <div class="p-3 bg-light rounded-3 text-center small text-secondary">
+                        <i class="bi bi-shield-lock-fill text-success me-1"></i>
+                        Safe &amp; Secure Checkout &bull; Cash on Delivery
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

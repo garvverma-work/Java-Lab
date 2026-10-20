@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Floating Alert Notifications Fragment -->
+<div th:fragment="alert-messages">
+    <!-- Success Message Alert -->
+    <div th:if="${successMessage}" 
+         class="alert alert-success alert-dismissible fade show sn-alert-floating shadow d-flex align-items-center" 
+         role="alert">
+        <i class="bi bi-check-circle-fill fs-5 me-2 text-success"></i>
+        <div class="flex-grow-1" th:text="${successMessage}">Operation completed successfully!</div>
+        <button type="button" class="btn-close ms-2" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Error Message Alert -->
+    <div th:if="${errorMessage}" 
+         class="alert alert-danger alert-dismissible fade show sn-alert-floating shadow d-flex align-items-center" 
+         role="alert">
+        <i class="bi bi-exclamation-triangle-fill fs-5 me-2 text-danger"></i>
+        <div class="flex-grow-1" th:text="${errorMessage}">Something went wrong.</div>
+        <button type="button" class="btn-close ms-2" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+
+</body>
+</html>

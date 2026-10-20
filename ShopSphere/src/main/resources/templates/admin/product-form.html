@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-meta((${isEdit} ? 'Edit Product' : 'Add New Product') + ' — ShopNest Admin')}"></head>
+<body class="bg-light">
+
+<!-- Admin Navigation Bar -->
+<header class="bg-white border-bottom sticky-top shadow-sm">
+    <div class="container py-2 d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+            <a class="navbar-brand sn-brand" th:href="@{/admin/dashboard}">
+                <span class="sn-brand-icon"><i class="bi bi-shield-lock-fill"></i></span>
+                ShopNest <span class="badge bg-dark ms-1 fs-6 fw-normal">Admin</span>
+            </a>
+            <div class="vr d-none d-md-block" style="height: 24px;"></div>
+            <nav class="d-none d-md-flex gap-2">
+                <a th:href="@{/admin/dashboard}" class="nav-link text-secondary"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
+                <a th:href="@{/admin/products}" class="nav-link active fw-bold text-primary"><i class="bi bi-box-seam me-1"></i> Products</a>
+                <a th:href="@{/admin/orders}" class="nav-link text-secondary"><i class="bi bi-receipt me-1"></i> Orders</a>
+            </nav>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <a th:href="@{/admin/products}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                <i class="bi bi-arrow-left me-1"></i> Back to Products
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- Floating Alerts -->
+<div th:replace="~{fragments/alerts :: alert-messages}"></div>
+
+<main class="py-4">
+    <div class="container" style="max-width: 860px;">
+        <div class="bg-white border rounded-4 shadow-sm p-4 p-md-5">
+            <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                <div>
+                    <h3 class="fw-bold mb-1" th:text="${isEdit} ? 'Edit Product Details' : 'Add New Product'">Add Product</h3>
+                    <p class="text-muted small mb-0">Fill in the product specifications to save to the H2 database</p>
+                </div>
+                <span class="badge bg-primary-subtle text-primary fw-bold" th:text="${isEdit} ? 'Update Mode' : 'Creation Mode'">Creation</span>
+            </div>
+
+            <!-- Product Form -->
+            <form th:action="@{/admin/products/save}" th:object="${productDto}" method="post">
+                <input type="hidden" th:field="*{id}">
+
+                <div class="row g-3">
+                    <!-- SKU -->
+                    <div class="col-md-6">
+                        <label for="sku" class="form-label small fw-bold">SKU Code (Stock Keeping Unit) *</label>
+                        <input type="text" id="sku" th:field="*{sku}" class="form-control font-monospace" 
+                               placeholder="e.g. SN-ELEC-005" th:classappend="${#fields.hasErrors('sku')} ? 'is-invalid' : ''">
+                        <div class="form-text small">Unique SKU format: SN-[CATEGORY]-XXX</div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('sku')}" th:errors="*{sku}"></div>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="col-md-6">
+                        <label for="category" class="form-label small fw-bold">Category *</label>
+                        <input type="text" id="category" th:field="*{category}" class="form-control" list="categoryOptions" 
+                               placeholder="Select or enter category (e.g. Electronics, Fashion...)" th:classappend="${#fields.hasErrors('category')} ? 'is-invalid' : ''">
+                        <datalist id="categoryOptions">
+                            <option value="Electronics"></option>
+                            <option value="Fashion"></option>
+                            <option value="Home Appliances"></option>
+                            <option value="Books"></option>
+                            <option value="Accessories"></option>
+                        </datalist>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
+                    </div>
+
+                    <!-- Product Name -->
+                    <div class="col-12">
+                        <label for="name" class="form-label small fw-bold">Product Name *</label>
+                        <input type="text" id="name" th:field="*{name}" class="form-control" 
+                               placeholder="e.g. Wireless Ergonomic Mechanical Keyboard" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''">
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                    </div>
+
+                    <!-- Price in INR -->
+                    <div class="col-md-4">
+                        <label for="price" class="form-label small fw-bold">Price in INR (₹) *</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">₹</span>
+                            <input type="number" step="0.01" min="1.0" id="price" th:field="*{price}" class="form-control" 
+                                   placeholder="2499.00" th:classappend="${#fields.hasErrors('price')} ? 'is-invalid' : ''">
+                        </div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+                    </div>
+
+                    <!-- Stock Quantity -->
+                    <div class="col-md-4">
+                        <label for="stockQuantity" class="form-label small fw-bold">Stock Quantity *</label>
+                        <input type="number" min="0" id="stockQuantity" th:field="*{stockQuantity}" class="form-control" 
+                               placeholder="25" th:classappend="${#fields.hasErrors('stockQuantity')} ? 'is-invalid' : ''">
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('stockQuantity')}" th:errors="*{stockQuantity}"></div>
+                    </div>
+
+                    <!-- Rating -->
+                    <div class="col-md-4">
+                        <label for="rating" class="form-label small fw-bold">Rating (0.0 to 5.0)</label>
+                        <input type="number" step="0.1" min="1.0" max="5.0" id="rating" th:field="*{rating}" class="form-control" placeholder="4.8">
+                    </div>
+
+                    <!-- Image URL -->
+                    <div class="col-12">
+                        <label for="productImageUrlInput" class="form-label small fw-bold">Product Image URL *</label>
+                        <input type="url" id="productImageUrlInput" th:field="*{imageUrl}" class="form-control" 
+                               placeholder="https://images.unsplash.com/photo-..." th:classappend="${#fields.hasErrors('imageUrl')} ? 'is-invalid' : ''">
+                        <div class="form-text small">Use a direct image link from Unsplash or local static path (e.g. /images/...)</div>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('imageUrl')}" th:errors="*{imageUrl}"></div>
+                        
+                        <!-- Image Live Preview -->
+                        <div class="mt-2 p-2 border rounded-3 bg-light d-inline-block">
+                            <div class="small text-muted mb-1">Image Preview:</div>
+                            <img id="productImagePreview" th:src="*{imageUrl != null ? imageUrl : ''}" 
+                                 class="rounded-2 border" style="max-height: 120px; object-fit: contain;" 
+                                 alt="Preview" onerror="this.style.display='none'">
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-12">
+                        <label for="description" class="form-label small fw-bold">Product Description *</label>
+                        <textarea id="description" th:field="*{description}" rows="4" class="form-control" 
+                                  placeholder="Provide key product specifications, dimensions, warranty, and features..." 
+                                  th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''"></textarea>
+                        <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                    </div>
+
+                    <!-- Featured Checkbox -->
+                    <div class="col-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="featured" th:field="*{featured}">
+                            <label class="form-check-label fw-semibold" for="featured">
+                                Showcase this product as "Featured" on the Storefront Home Page
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top">
+                    <a th:href="@{/admin/products}" class="btn btn-outline-secondary rounded-pill px-4">Cancel</a>
+                    <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">
+                        <i class="bi bi-check-lg me-1"></i> <span th:text="${isEdit} ? 'Update Product' : 'Save Product to Database'">Save Product</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-meta('Product Catalog — ShopNest')}"></head>
+<body>
+
+<!-- Navigation Bar -->
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<!-- Floating Alerts -->
+<div th:replace="~{fragments/alerts :: alert-messages}"></div>
+
+<main class="py-4">
+    <div class="container">
+        <!-- Page Breadcrumb & Header -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb small">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Products</li>
+                <li th:if="${selectedCategory != 'All'}" class="breadcrumb-item active" th:text="${selectedCategory}">Category</li>
+            </ol>
+        </nav>
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">
+                    <span th:if="${keyword != null && !keyword.isEmpty()}">Search Results for "<span th:text="${keyword}"></span>"</span>
+                    <span th:unless="${keyword != null && !keyword.isEmpty()}">
+                        <span th:text="${selectedCategory}">All</span> Products
+                    </span>
+                </h2>
+                <p class="text-muted small mb-0">
+                    Showing <strong th:text="${totalFound}">0</strong> products available for instant order
+                </p>
+            </div>
+
+            <!-- Sorting Dropdown Form -->
+            <form th:action="@{/products}" method="get" class="d-flex align-items-center gap-2">
+                <input type="hidden" name="category" th:value="${selectedCategory}">
+                <input type="hidden" name="keyword" th:value="${keyword}">
+                <label for="sortSelect" class="small text-muted text-nowrap fw-semibold">Sort By:</label>
+                <select id="sortSelect" name="sort" class="form-select form-select-sm rounded-pill shadow-none" onchange="this.form.submit()">
+                    <option value="default" th:selected="${currentSort == 'default'}">Featured / Default</option>
+                    <option value="price_asc" th:selected="${currentSort == 'price_asc'}">Price: Low to High</option>
+                    <option value="price_desc" th:selected="${currentSort == 'price_desc'}">Price: High to Low</option>
+                    <option value="name_asc" th:selected="${currentSort == 'name_asc'}">Product Name: A - Z</option>
+                    <option value="newest" th:selected="${currentSort == 'newest'}">Newest Arrivals</option>
+                </select>
+            </form>
+        </div>
+
+        <!-- Category Filter Pills Bar -->
+        <div class="d-flex flex-wrap gap-2 mb-4 pb-2 border-bottom">
+            <a th:href="@{/products(category='All', keyword=${keyword}, sort=${currentSort})}" 
+               class="sn-category-pill"
+               th:classappend="${selectedCategory == 'All'} ? 'active' : ''">
+                <i class="bi bi-grid-fill"></i> All Items
+            </a>
+            <a th:each="cat : ${categories}" 
+               th:href="@{/products(category=${cat}, keyword=${keyword}, sort=${currentSort})}" 
+               class="sn-category-pill"
+               th:classappend="${selectedCategory == cat} ? 'active' : ''">
+                <span th:text="${cat}">Category</span>
+            </a>
+        </div>
+
+        <!-- Empty Results Alert -->
+        <div th:if="${#lists.isEmpty(products)}" class="text-center py-5 my-5 bg-white rounded-4 border">
+            <div class="display-1 text-muted mb-3"><i class="bi bi-search"></i></div>
+            <h4 class="fw-bold">No Products Found</h4>
+            <p class="text-muted">We couldn't find any products matching your search criteria.</p>
+            <a th:href="@{/products}" class="btn btn-primary rounded-pill px-4 mt-2">
+                Clear Filters &amp; View All
+            </a>
+        </div>
+
+        <!-- Products Grid -->
+        <div th:unless="${#lists.isEmpty(products)}" class="row g-4">
+            <div class="col-xl-3 col-lg-4 col-md-6" th:each="product : ${products}">
+                <div class="sn-product-card">
+                    <div class="sn-product-img-wrapper">
+                        <span class="sn-badge-category" th:text="${product.category}">Category</span>
+                        <span class="badge sn-badge-stock" 
+                              th:classappend="${product.inStock} ? 'bg-success' : 'bg-danger'"
+                              th:text="${product.inStock} ? 'In Stock' : 'Out of Stock'">In Stock</span>
+                        <a th:href="@{/products/{id}(id=${product.id})}">
+                            <img th:src="${product.imageUrl}" th:alt="${product.name}" class="sn-product-img" loading="lazy">
+                        </a>
+                    </div>
+                    <div class="sn-product-body">
+                        <div class="sn-product-sku" th:text="${product.sku}">SKU</div>
+                        <a th:href="@{/products/{id}(id=${product.id})}" class="sn-product-title" th:text="${product.name}">Product Name</a>
+                        <p class="sn-product-desc" th:text="${product.description}">Description</p>
+                        
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="text-warning small me-1">
+                                <i class="bi bi-star-fill"></i>
+                            </span>
+                            <span class="fw-bold small" th:text="${product.rating}">4.8</span>
+                            <span class="text-muted small ms-1" th:text="'(' + ${product.stockQuantity} + ' left)'">(10 left)</span>
+                        </div>
+
+                        <div class="sn-price-row">
+                            <div>
+                                <span class="sn-currency-symbol">₹</span>
+                                <span class="sn-product-price" th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">1,999.00</span>
+                            </div>
+                            <form th:action="@{/cart/add}" method="post" class="m-0">
+                                <input type="hidden" name="productId" th:value="${product.id}">
+                                <input type="hidden" name="quantity" value="1">
+                                <input type="hidden" name="redirect" th:value="@{/products(category=${selectedCategory}, keyword=${keyword}, sort=${currentSort})}">
+                                <button type="submit" class="sn-btn-cart" th:disabled="${!product.inStock}">
+                                    <i class="bi bi-cart-plus"></i> Add
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

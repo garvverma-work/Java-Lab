@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-meta('Contact Support — ShopNest')}"></head>
+<body>
+
+<!-- Navigation Bar -->
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<!-- Floating Alerts -->
+<div th:replace="~{fragments/alerts :: alert-messages}"></div>
+
+<main class="py-5">
+    <div class="container" style="max-width: 860px;">
+        <div class="text-center mb-5">
+            <span class="badge bg-primary-subtle text-primary fw-bold mb-2">Customer Care &amp; Support</span>
+            <h1 class="fw-bold">Get In Touch With <span class="sn-brand">ShopNest</span></h1>
+            <p class="text-muted">Have questions regarding product catalog, orders, or the college project submission? Send us a message.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-5">
+                <div class="p-4 bg-white border rounded-4 shadow-sm h-100">
+                    <h5 class="fw-bold mb-4">Contact Information</h5>
+                    <div class="d-flex align-items-start gap-3 mb-3">
+                        <div class="text-primary fs-4"><i class="bi bi-geo-alt"></i></div>
+                        <div>
+                            <div class="fw-bold small">Project Headquarters</div>
+                            <div class="text-muted small">Department of Computer Science &amp; Engineering, College Campus</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-3 mb-3">
+                        <div class="text-primary fs-4"><i class="bi bi-envelope"></i></div>
+                        <div>
+                            <div class="fw-bold small">Support Email</div>
+                            <div class="text-muted small">support@shopnest.com</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-3 mb-3">
+                        <div class="text-primary fs-4"><i class="bi bi-telephone"></i></div>
+                        <div>
+                            <div class="fw-bold small">Toll-Free Phone</div>
+                            <div class="text-muted small">+91 1800-SHOP-NEST</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="text-primary fs-4"><i class="bi bi-clock"></i></div>
+                        <div>
+                            <div class="fw-bold small">Operating Hours</div>
+                            <div class="text-muted small">Mon &ndash; Sat: 9:00 AM &ndash; 7:00 PM IST</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="p-4 bg-white border rounded-4 shadow-sm">
+                    <h5 class="fw-bold mb-3">Send a Message</h5>
+                    <form onsubmit="alert('Thank you! Your feedback message has been received.'); this.reset(); return false;">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Your Name</label>
+                            <input type="text" class="form-control" placeholder="Rahul Sharma" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Email Address</label>
+                            <input type="email" class="form-control" placeholder="rahul@example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Subject</label>
+                            <input type="text" class="form-control" placeholder="Order Query or Project Evaluation" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold">Your Message</label>
+                            <textarea class="form-control" rows="4" placeholder="How can we assist you today?" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold">
+                            <i class="bi bi-send me-2"></i> Submit Inquiry
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

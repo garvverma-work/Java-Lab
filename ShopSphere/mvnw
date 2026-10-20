@@ -1,0 +1,23 @@
+#!/bin/sh
+# ----------------------------------------------------------------------------
+# Maven Wrapper script for UNIX-like environments (Linux, macOS, BSD, etc.)
+# ----------------------------------------------------------------------------
+set -e
+
+DIRNAME=$(dirname "$0")
+ROOT_DIR=$(cd "$DIRNAME" && pwd)
+
+if command -v mvn >/dev/null 2>&1; then
+    exec mvn "$@"
+fi
+
+WRAPPER_JAR="$ROOT_DIR/.mvn/wrapper/maven-wrapper.jar"
+PROPERTIES="$ROOT_DIR/.mvn/wrapper/maven-wrapper.properties"
+
+if [ -f "$PROPERTIES" ]; then
+    DIST_URL=$(grep "distributionUrl=" "$PROPERTIES" | cut -d= -f2-)
+fi
+
+echo "Maven not found in system PATH. Please install Apache Maven or open in VS Code with Maven for Java extension."
+echo "Running: mvn $@"
+exec mvn "$@"

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-meta('Manage Order #' + ${order.orderNumber} + ' — ShopNest Admin')}"></head>
+<body class="bg-light">
+
+<!-- Admin Navigation Bar -->
+<header class="bg-white border-bottom sticky-top shadow-sm">
+    <div class="container py-2 d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+            <a class="navbar-brand sn-brand" th:href="@{/admin/dashboard}">
+                <span class="sn-brand-icon"><i class="bi bi-shield-lock-fill"></i></span>
+                ShopNest <span class="badge bg-dark ms-1 fs-6 fw-normal">Admin</span>
+            </a>
+            <div class="vr d-none d-md-block" style="height: 24px;"></div>
+            <nav class="d-none d-md-flex gap-2">
+                <a th:href="@{/admin/dashboard}" class="nav-link text-secondary"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
+                <a th:href="@{/admin/products}" class="nav-link text-secondary"><i class="bi bi-box-seam me-1"></i> Products</a>
+                <a th:href="@{/admin/orders}" class="nav-link active fw-bold text-primary"><i class="bi bi-receipt me-1"></i> Orders</a>
+            </nav>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <a th:href="@{/admin/orders}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                <i class="bi bi-arrow-left me-1"></i> Back to Orders
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- Floating Alerts -->
+<div th:replace="~{fragments/alerts :: alert-messages}"></div>
+
+<main class="py-4">
+    <div class="container" style="max-width: 900px;">
+        <div class="bg-white border rounded-4 shadow-sm p-4 p-md-5 mb-4">
+            
+            <!-- Order Header & Status Update Section -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 pb-4 mb-4 border-bottom">
+                <div>
+                    <span class="text-muted small">Customer Order Details</span>
+                    <h3 class="fw-bold font-monospace text-primary mb-1" th:text="${order.orderNumber}">SN-ORD-1234</h3>
+                    <div class="text-secondary small">
+                        <i class="bi bi-calendar3 me-1"></i> Placed on <span th:text="${order.formattedDate}">19 Oct 2026</span>
+                    </div>
+                </div>
+
+                <!-- Update Status Form -->
+                <div class="p-3 bg-light rounded-3 border">
+                    <form th:action="@{/admin/orders/{id}/status(id=${order.id})}" method="post" class="d-flex align-items-center gap-2">
+                        <label for="statusSelect" class="small fw-bold text-nowrap">Order Status:</label>
+                        <select id="statusSelect" name="status" class="form-select form-select-sm fw-bold">
+                            <option value="PLACED" th:selected="${order.orderStatus == 'PLACED'}">PLACED</option>
+                            <option value="CONFIRMED" th:selected="${order.orderStatus == 'CONFIRMED'}">CONFIRMED</option>
+                            <option value="SHIPPED" th:selected="${order.orderStatus == 'SHIPPED'}">SHIPPED</option>
+                            <option value="DELIVERED" th:selected="${order.orderStatus == 'DELIVERED'}">DELIVERED</option>
+                            <option value="CANCELLED" th:selected="${order.orderStatus == 'CANCELLED'}">CANCELLED</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3 text-nowrap">Update</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Customer & Shipping Breakdown Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="p-3 border rounded-3 h-100 bg-light">
+                        <h6 class="fw-bold text-dark mb-2"><i class="bi bi-person-circle me-1 text-primary"></i> Customer Information</h6>
+                        <div class="fw-bold fs-6" th:text="${order.customerName}">Rahul Sharma</div>
+                        <div class="small text-secondary mb-1">
+                            <i class="bi bi-envelope me-1"></i> <span th:text="${order.customerEmail}">rahul@example.com</span>
+                        </div>
+                        <div class="small text-secondary">
+                            <i class="bi bi-telephone me-1"></i> <span th:text="${order.customerPhone}">9876543210</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="p-3 border rounded-3 h-100 bg-light">
+                        <h6 class="fw-bold text-dark mb-2"><i class="bi bi-geo-alt-fill me-1 text-danger"></i> Shipping &amp; Payment</h6>
+                        <div class="small text-secondary" th:text="${order.shippingAddress}">123 Tech Park Road</div>
+                        <div class="small text-secondary mb-2" th:text="${order.city} + ' - ' + ${order.postalCode}">Bengaluru - 560001</div>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-success" th:text="${order.paymentMethod}">Cash on Delivery</span>
+                            <span class="badge bg-secondary" th:text="'Payment: ' + ${order.paymentStatus}">Payment: Pending</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Purchased Line Items -->
+            <div class="mb-4">
+                <h6 class="fw-bold text-dark mb-3">Items in this Order</h6>
+                <div class="table-responsive border rounded-3 overflow-hidden">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light small text-uppercase text-secondary">
+                            <tr>
+                                <th>Product</th>
+                                <th class="text-center">SKU</th>
+                                <th class="text-end">Unit Price</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-end">Line Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${order.items}">
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <img th:if="${item.productImageUrl}" th:src="${item.productImageUrl}" class="rounded-2 border" style="width: 44px; height: 44px; object-fit: cover;">
+                                        <span class="fw-semibold small" th:text="${item.productName}">Product Name</span>
+                                    </div>
+                                </td>
+                                <td class="text-center font-monospace small text-muted" th:text="${item.productSku}">SKU</td>
+                                <td class="text-end small">₹<span th:text="${#numbers.formatDecimal(item.price, 1, 'COMMA', 2, 'POINT')}">0.00</span></td>
+                                <td class="text-center fw-bold" th:text="${item.quantity}">1</td>
+                                <td class="text-end fw-bold">₹<span th:text="${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 2, 'POINT')}">0.00</span></td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="table-light">
+                            <tr>
+                                <td colspan="4" class="text-end fw-bold">Grand Total Payable (COD):</td>
+                                <td class="text-end fw-bold fs-6 text-primary">
+                                    ₹<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 'COMMA', 2, 'POINT')}">0.00</span>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Back and Print Actions -->
+            <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                <a th:href="@{/admin/orders}" class="btn btn-outline-secondary rounded-pill px-4">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Orders List
+                </a>
+                <button type="button" class="btn btn-outline-dark rounded-pill px-4" onclick="window.print()">
+                    <i class="bi bi-printer me-1"></i> Print Packing Slip
+                </button>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

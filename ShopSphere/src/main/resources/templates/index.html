@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-meta('Home — Discover Best Products')}"></head>
+<body>
+
+<!-- Navigation Bar -->
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<!-- Floating Alerts -->
+<div th:replace="~{fragments/alerts :: alert-messages}"></div>
+
+<main>
+    <div class="container pb-5">
+        <!-- Hero Banner Section -->
+        <div class="sn-hero-banner">
+            <div class="row align-items-center">
+                <div class="col-lg-7">
+                    <span class="sn-pill-badge">
+                        <i class="bi bi-stars"></i> Next-Gen College Project E-Commerce
+                    </span>
+                    <h1 class="sn-hero-title mb-3">
+                        Upgrade Your Lifestyle with <span style="color: #67e8f9;">ShopNest</span>
+                    </h1>
+                    <p class="sn-hero-subtitle mb-4">
+                        Discover top electronics, curated fashion, smart home appliances, bestselling books, and luxury accessories with Cash on Delivery and fast doorstep delivery.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a th:href="@{/products}" class="btn btn-light btn-lg rounded-pill px-4 fw-bold shadow-sm">
+                            <i class="bi bi-bag-check-fill text-primary me-2"></i> Shop All Products
+                        </a>
+                        <a th:href="@{/products(category='Electronics')}" class="btn btn-outline-light btn-lg rounded-pill px-4 fw-semibold">
+                            <i class="bi bi-laptop me-2"></i> Electronics Hub
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-none d-lg-block text-center position-relative">
+                    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=80" 
+                         alt="Sony Headphones" 
+                         class="img-fluid rounded-4 shadow-lg border border-light border-opacity-25" 
+                         style="max-height: 320px; object-fit: cover;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Trust & Value Badges -->
+        <div class="row g-3 my-4">
+            <div class="col-md-3 col-6">
+                <div class="p-3 bg-white border rounded-3 d-flex align-items-center gap-3">
+                    <div class="text-primary fs-2"><i class="bi bi-truck"></i></div>
+                    <div>
+                        <div class="fw-bold small">Free Fast Delivery</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Across all orders in India</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="p-3 bg-white border rounded-3 d-flex align-items-center gap-3">
+                    <div class="text-success fs-2"><i class="bi bi-cash-coin"></i></div>
+                    <div>
+                        <div class="fw-bold small">Cash on Delivery</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Pay upon safe arrival</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="p-3 bg-white border rounded-3 d-flex align-items-center gap-3">
+                    <div class="text-warning fs-2"><i class="bi bi-arrow-repeat"></i></div>
+                    <div>
+                        <div class="fw-bold small">Easy 7-Day Returns</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Hassle-free guarantee</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="p-3 bg-white border rounded-3 d-flex align-items-center gap-3">
+                    <div class="text-info fs-2"><i class="bi bi-shield-lock"></i></div>
+                    <div>
+                        <div class="fw-bold small">100% Genuine Items</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">Verified quality checks</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Section -->
+        <div class="my-5">
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <h3 class="fw-bold mb-1">Explore By Category</h3>
+                    <p class="text-muted mb-0 small">Find exactly what you need sorted into curated categories</p>
+                </div>
+                <a th:href="@{/products}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
+                    View All <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-lg col-md-4 col-6">
+                    <a th:href="@{/products(category='Electronics')}" class="sn-cat-card">
+                        <div class="sn-cat-icon"><i class="bi bi-laptop"></i></div>
+                        <h6 class="fw-bold mb-0">Electronics</h6>
+                        <small class="text-muted">Gadgets &amp; Gear</small>
+                    </a>
+                </div>
+                <div class="col-lg col-md-4 col-6">
+                    <a th:href="@{/products(category='Fashion')}" class="sn-cat-card">
+                        <div class="sn-cat-icon" style="background-color: #fdf2f8; color: #db2777;"><i class="bi bi-person"></i></div>
+                        <h6 class="fw-bold mb-0">Fashion</h6>
+                        <small class="text-muted">Men &amp; Women</small>
+                    </a>
+                </div>
+                <div class="col-lg col-md-4 col-6">
+                    <a th:href="@{/products(category='Home Appliances')}" class="sn-cat-card">
+                        <div class="sn-cat-icon" style="background-color: #ecfdf5; color: #059669;"><i class="bi bi-house-gear"></i></div>
+                        <h6 class="fw-bold mb-0">Home Appliances</h6>
+                        <small class="text-muted">Kitchen &amp; Living</small>
+                    </a>
+                </div>
+                <div class="col-lg col-md-4 col-6">
+                    <a th:href="@{/products(category='Books')}" class="sn-cat-card">
+                        <div class="sn-cat-icon" style="background-color: #fffbeb; color: #d97706;"><i class="bi bi-book"></i></div>
+                        <h6 class="fw-bold mb-0">Books</h6>
+                        <small class="text-muted">Bestsellers &amp; Code</small>
+                    </a>
+                </div>
+                <div class="col-lg col-md-4 col-6">
+                    <a th:href="@{/products(category='Accessories')}" class="sn-cat-card">
+                        <div class="sn-cat-icon" style="background-color: #f5f3ff; color: #7c3aed;"><i class="bi bi-watch"></i></div>
+                        <h6 class="fw-bold mb-0">Accessories</h6>
+                        <small class="text-muted">Wallets &amp; Bags</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Products Section -->
+        <div class="my-5">
+            <div class="d-flex justify-content-between align-items-end mb-4">
+                <div>
+                    <span class="badge bg-primary-subtle text-primary fw-bold mb-1">Trending Today</span>
+                    <h3 class="fw-bold mb-1">Featured Products</h3>
+                    <p class="text-muted mb-0 small">Handpicked top deals loved by customers</p>
+                </div>
+                <a th:href="@{/products}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
+                    See More Deals <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="row g-4">
+                <div class="col-xl-3 col-lg-4 col-md-6" th:each="product : ${featuredProducts}">
+                    <div class="sn-product-card">
+                        <div class="sn-product-img-wrapper">
+                            <span class="sn-badge-category" th:text="${product.category}">Category</span>
+                            <span class="badge sn-badge-stock" 
+                                  th:classappend="${product.inStock} ? 'bg-success' : 'bg-danger'"
+                                  th:text="${product.inStock} ? 'In Stock' : 'Out of Stock'">In Stock</span>
+                            <a th:href="@{/products/{id}(id=${product.id})}">
+                                <img th:src="${product.imageUrl}" th:alt="${product.name}" class="sn-product-img" loading="lazy">
+                            </a>
+                        </div>
+                        <div class="sn-product-body">
+                            <div class="sn-product-sku" th:text="${product.sku}">SKU</div>
+                            <a th:href="@{/products/{id}(id=${product.id})}" class="sn-product-title" th:text="${product.name}">Product Name</a>
+                            <p class="sn-product-desc" th:text="${product.description}">Description</p>
+                            
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="text-warning small me-1">
+                                    <i class="bi bi-star-fill"></i>
+                                </span>
+                                <span class="fw-bold small" th:text="${product.rating}">4.8</span>
+                                <span class="text-muted small ms-1">(Verified)</span>
+                            </div>
+
+                            <div class="sn-price-row">
+                                <div>
+                                    <span class="sn-currency-symbol">₹</span>
+                                    <span class="sn-product-price" th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">1,999.00</span>
+                                </div>
+                                <form th:action="@{/cart/add}" method="post" class="m-0">
+                                    <input type="hidden" name="productId" th:value="${product.id}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <input type="hidden" name="redirect" value="/">
+                                    <button type="submit" class="sn-btn-cart" th:disabled="${!product.inStock}">
+                                        <i class="bi bi-cart-plus"></i> Add
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- College Final Year Project Banner -->
+        <div class="p-4 p-md-5 my-5 rounded-4 bg-light border border-2 border-primary border-opacity-25">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <span class="badge bg-indigo text-primary fw-bold mb-2">Academic Showcase</span>
+                    <h3 class="fw-bold mb-2">Final Year E-Commerce Project Implementation</h3>
+                    <p class="text-secondary mb-3">
+                        ShopNest demonstrates end-to-end full-stack Java development using modern architectural design patterns:
+                        Spring MVC, Hibernate ORM, Thymeleaf Server-Side Rendering, and an embedded offline H2 database.
+                    </p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-white text-dark border"><i class="bi bi-check-circle text-success me-1"></i> Java 17</span>
+                        <span class="badge bg-white text-dark border"><i class="bi bi-check-circle text-success me-1"></i> Spring Boot 3</span>
+                        <span class="badge bg-white text-dark border"><i class="bi bi-check-circle text-success me-1"></i> H2 File-Based DB</span>
+                        <span class="badge bg-white text-dark border"><i class="bi bi-check-circle text-success me-1"></i> Thymeleaf Engine</span>
+                        <span class="badge bg-white text-dark border"><i class="bi bi-check-circle text-success me-1"></i> Cash on Delivery</span>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                    <a th:href="@{/about}" class="btn btn-primary btn-lg rounded-pill px-4 fw-bold">
+                        <i class="bi bi-journal-code me-2"></i> Project Details
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

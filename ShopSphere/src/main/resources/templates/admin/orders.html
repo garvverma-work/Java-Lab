@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head-meta('Customer Orders — ShopNest Admin')}"></head>
+<body class="bg-light">
+
+<!-- Admin Navigation Bar -->
+<header class="bg-white border-bottom sticky-top shadow-sm">
+    <div class="container py-2 d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center gap-3">
+            <a class="navbar-brand sn-brand" th:href="@{/admin/dashboard}">
+                <span class="sn-brand-icon"><i class="bi bi-shield-lock-fill"></i></span>
+                ShopNest <span class="badge bg-dark ms-1 fs-6 fw-normal">Admin</span>
+            </a>
+            <div class="vr d-none d-md-block" style="height: 24px;"></div>
+            <nav class="d-none d-md-flex gap-2">
+                <a th:href="@{/admin/dashboard}" class="nav-link text-secondary"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
+                <a th:href="@{/admin/products}" class="nav-link text-secondary"><i class="bi bi-box-seam me-1"></i> Products</a>
+                <a th:href="@{/admin/orders}" class="nav-link active fw-bold text-primary"><i class="bi bi-receipt me-1"></i> Orders</a>
+            </nav>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <a th:href="@{/}" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                <i class="bi bi-shop me-1"></i> View Live Store
+            </a>
+            <a th:href="@{/admin/logout}" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                <i class="bi bi-box-arrow-right me-1"></i> Logout
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- Floating Alerts -->
+<div th:replace="~{fragments/alerts :: alert-messages}"></div>
+
+<main class="py-4">
+    <div class="container">
+        <!-- Title -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+            <div>
+                <h2 class="fw-bold mb-1">Customer Order Fulfillment</h2>
+                <p class="text-muted small mb-0">Track customer purchases, update dispatch status, and manage Cash on Delivery</p>
+            </div>
+        </div>
+
+        <!-- Order Status Filter Pills -->
+        <div class="d-flex flex-wrap gap-2 mb-4 pb-2 border-bottom">
+            <a th:href="@{/admin/orders(status='ALL')}" 
+               class="btn btn-sm rounded-pill px-3 fw-semibold"
+               th:classappend="${selectedStatus == 'ALL'} ? 'btn-dark' : 'btn-outline-secondary'">
+                All Orders
+            </a>
+            <a th:href="@{/admin/orders(status='PLACED')}" 
+               class="btn btn-sm rounded-pill px-3 fw-semibold"
+               th:classappend="${selectedStatus == 'PLACED'} ? 'btn-info text-white' : 'btn-outline-secondary'">
+                Placed
+            </a>
+            <a th:href="@{/admin/orders(status='CONFIRMED')}" 
+               class="btn btn-sm rounded-pill px-3 fw-semibold"
+               th:classappend="${selectedStatus == 'CONFIRMED'} ? 'btn-primary' : 'btn-outline-secondary'">
+                Confirmed
+            </a>
+            <a th:href="@{/admin/orders(status='SHIPPED')}" 
+               class="btn btn-sm rounded-pill px-3 fw-semibold"
+               th:classappend="${selectedStatus == 'SHIPPED'} ? 'btn-warning text-dark' : 'btn-outline-secondary'">
+                Shipped
+            </a>
+            <a th:href="@{/admin/orders(status='DELIVERED')}" 
+               class="btn btn-sm rounded-pill px-3 fw-semibold"
+               th:classappend="${selectedStatus == 'DELIVERED'} ? 'btn-success' : 'btn-outline-secondary'">
+                Delivered
+            </a>
+            <a th:href="@{/admin/orders(status='CANCELLED')}" 
+               class="btn btn-sm rounded-pill px-3 fw-semibold"
+               th:classappend="${selectedStatus == 'CANCELLED'} ? 'btn-danger' : 'btn-outline-secondary'">
+                Cancelled
+            </a>
+        </div>
+
+        <!-- Orders Table Card -->
+        <div class="bg-white border rounded-4 shadow-sm overflow-hidden mb-4">
+            <!-- Empty State -->
+            <div th:if="${#lists.isEmpty(orders)}" class="text-center py-5">
+                <i class="bi bi-box2 display-3 text-muted"></i>
+                <h5 class="fw-bold mt-3">No Orders Found</h5>
+                <p class="text-muted small">No customer orders currently match the selected status.</p>
+            </div>
+
+            <!-- Populated Table -->
+            <div th:unless="${#lists.isEmpty(orders)}" class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead class="table-light small text-uppercase text-secondary">
+                        <tr>
+                            <th>Order Reference</th>
+                            <th>Customer Info</th>
+                            <th>Delivery Location</th>
+                            <th>Date Placed</th>
+                            <th>Payment</th>
+                            <th>Total Amount</th>
+                            <th>Current Status</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="order : ${orders}">
+                            <td>
+                                <a th:href="@{/admin/orders/{id}(id=${order.id})}" class="fw-bold font-monospace text-primary text-decoration-none" th:text="${order.orderNumber}">
+                                    SN-ORD-1234
+                                </a>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark" th:text="${order.customerName}">Rahul Sharma</div>
+                                <div class="small text-muted" th:text="${order.customerEmail}">rahul@example.com</div>
+                                <div class="small text-muted font-monospace" th:text="${order.customerPhone}">9876543210</div>
+                            </td>
+                            <td>
+                                <div class="small text-dark" th:text="${order.city}">Bengaluru</div>
+                                <div class="small text-muted font-monospace" th:text="'PIN: ' + ${order.postalCode}">560001</div>
+                            </td>
+                            <td>
+                                <span class="small text-secondary" th:text="${order.formattedDate}">19 Oct 2026</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border">
+                                    <i class="bi bi-cash me-1 text-success"></i> COD
+                                </span>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-dark">₹<span th:text="${#numbers.formatDecimal(order.totalAmount, 1, 'COMMA', 2, 'POINT')}">0.00</span></span>
+                            </td>
+                            <td>
+                                <span class="badge" 
+                                      th:classappend="${order.orderStatus == 'DELIVERED'} ? 'bg-success' : (${order.orderStatus == 'SHIPPED'} ? 'bg-warning text-dark' : (${order.orderStatus == 'CONFIRMED'} ? 'bg-primary' : (${order.orderStatus == 'CANCELLED'} ? 'bg-danger' : 'bg-info text-dark')))"
+                                      th:text="${order.orderStatus}">PLACED</span>
+                            </td>
+                            <td class="text-end">
+                                <a th:href="@{/admin/orders/{id}(id=${order.id})}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                    Manage <i class="bi bi-chevron-right ms-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>
